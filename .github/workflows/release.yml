@@ -21,7 +21,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Set Release Version for future environment variables
-        run: echo "PUBLISH_VERSION=$(echo ${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+        run: echo "PUBLISH_VERSION=$(echo ${{ github.event.release.tag_name }})" >> $GITHUB_ENV
       - name: Debug the value that would be published
         run: echo "${{ env.PUBLISH_VERSION }}"
 #      - name: Publish package
