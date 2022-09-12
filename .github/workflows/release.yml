@@ -1,11 +1,6 @@
 #
-# Publishes the package to Sonatype - the Maven Central artifact relayer
+# Publishes the package to Sonatype - the Maven Central artifact broker
 #
-# Required secrets:
-#  ORG_GRADLE_PROJECT_sonatypeUsername - our Sonatype account username
-#  ORG_GRADLE_PROJECT_sonatypePassword - our Sonatype account password
-#  ORG_GRADLE_PROJECT_signingKey - ascii-armored secret key. exported via `gpg --armor --export-secret-keys TTSSonatypeAdmins@Target.com`
-#  ORG_GRADLE_PROJECT_signingPassword - the PGP key password
 
 name: Publish
 
