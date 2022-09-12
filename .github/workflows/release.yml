@@ -25,7 +25,7 @@ jobs:
       - name: Publish package
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: -Pversion="${{ env.PUBLISH_VERSION }}" publish
+          arguments: -Pversion=${{ env.PUBLISH_VERSION }} publish
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
