@@ -1,4 +1,3 @@
-
 repositories {
     mavenLocal()
     mavenCentral()
@@ -6,7 +5,9 @@ repositories {
 
 plugins {
     kotlin("jvm") version "1.7.10"
+    `java-library`
     `maven-publish`
+    signing
 }
 
 group = "com.target"
@@ -39,7 +40,73 @@ tasks {
     }
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    repositories {
+        maven {
+            credentials(PasswordCredentials::class)
+            name = "sonatype" // correlates with the environment variable set in the github action publish job
+            val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            setUrl(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+        }
+    }
+
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "health-monitor-interface"
+            from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name.set("Health Monitor Interface")
+                description.set("Shareable health monitoring interface")
+                url.set("https://github.com/target/health-monitor-interface")
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("chad-moller-target")
+                        name.set("Chad Moller")
+                        email.set("a@a.com")
+                    }
+                    developer {
+                        id.set("dtanner")
+                        name.set("Dan Tanner")
+                        email.set("a@a.com")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/target/health-monitor-interface")
+                }
+            }
+        }
+    }
+
+}
+
+signing {
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    if (signingKey.isNullOrBlank() || signingPassword.isNullOrBlank()) {
+        println("signing key or password is missing. Will disable signing. If you are publishing to sonatype, " +
+                "export ORG_GRADLE_PROJECT_signingKey and ORG_GRADLE_PROJECT_signingPassword.")
+        isRequired = false
+    }
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications)
 }
