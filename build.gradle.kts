@@ -1,3 +1,4 @@
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -51,7 +52,7 @@ publishing {
     repositories {
         maven {
             credentials(PasswordCredentials::class)
-            name = "sonatype" // correlates with the environment variable set in the github action publish job
+            name = "sonatype" // correlates with the environment variable set in the github action release.yml publish job
             val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             setUrl(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
@@ -59,8 +60,13 @@ publishing {
     }
 
     publications {
+        val projectTitle: String by project
+        val projectDescription: String by project
+        val projectUrl: String by project
+        val projectScm: String by project
+
         create<MavenPublication>("mavenJava") {
-            artifactId = "health-monitor-interface"
+            artifactId = rootProject.name
             from(components["java"])
             versionMapping {
                 usage("java-api") {
@@ -71,9 +77,9 @@ publishing {
                 }
             }
             pom {
-                name.set("Health Monitor Interface")
-                description.set("Shareable health monitoring interface")
-                url.set("https://github.com/target/health-monitor-interface")
+                name.set(projectTitle)
+                description.set(projectDescription)
+                url.set(projectUrl)
                 licenses {
                     license {
                         name.set("MIT")
@@ -88,7 +94,7 @@ publishing {
                     }
                 }
                 scm {
-                    url.set("https://github.com/target/health-monitor-interface")
+                    url.set(projectScm)
                 }
             }
         }
