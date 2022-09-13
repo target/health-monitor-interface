@@ -8,6 +8,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
 group = "com.target"
@@ -39,6 +40,7 @@ tasks {
         useJUnitPlatform()
     }
 }
+
 
 java {
     withJavadocJar()
@@ -80,14 +82,9 @@ publishing {
                 }
                 developers {
                     developer {
-                        id.set("chad-moller-target")
-                        name.set("Chad Moller")
-                        email.set("a@a.com")
-                    }
-                    developer {
-                        id.set("dtanner")
-                        name.set("Dan Tanner")
-                        email.set("a@a.com")
+                        id.set("ossteam")
+                        name.set("OSS Office")
+                        email.set("ossteam@target.com")
                     }
                 }
                 scm {
@@ -103,10 +100,18 @@ signing {
     val signingKey: String? by project
     val signingPassword: String? by project
     if (signingKey.isNullOrBlank() || signingPassword.isNullOrBlank()) {
-        println("signing key or password is missing. Will disable signing. If you are publishing to sonatype, " +
-                "export ORG_GRADLE_PROJECT_signingKey and ORG_GRADLE_PROJECT_signingPassword.")
         isRequired = false
+    } else {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications)
     }
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications)
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
 }
