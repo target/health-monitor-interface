@@ -1,8 +1,9 @@
 # health-monitor-interface
 
-Provides a shareable health monitoring interface. This allows applications to implement health checks
-that can be provided to their users. For example, the lite-for-jdbc library provides a default health
-check implementation that can be added to an application's list of health checks.
+Provides a shareable health monitoring interface and function to execute a list of checks.
+This allows applications to implement health checks that can be provided to their users. For
+example, the lite-for-jdbc library provides a default health check implementation that can be added
+to an application's list of health checks.
 
 ## HealthCheckAll
 
@@ -17,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    // TODO INSERT NON-TARGET ARTFICAT HERE
+    api("com.target:health-monitor-interface:1.2.0")
 }
 ```
 
@@ -52,5 +53,3 @@ Code reviews will look for consistency with existing code standards and naming c
 ### Testing standards
 
 All changes should include sufficient testing to prove it is working as intended.
-
-~~~~
