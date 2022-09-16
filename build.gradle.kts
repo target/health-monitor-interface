@@ -5,11 +5,11 @@ repositories {
 }
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm")
     `java-library`
     `maven-publish`
     signing
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("io.github.gradle-nexus.publish-plugin")
 }
 
 group = "com.target"
@@ -32,10 +32,11 @@ dependencies {
 
 }
 
+val jvmTargetVersion: String by project
 tasks {
-    compileJava { options.release.set(11) }
-    compileKotlin { kotlinOptions { jvmTarget = "11" } }
-    compileTestKotlin { kotlinOptions { jvmTarget = "11" } }
+    compileJava { options.release.set(jvmTargetVersion.toInt()) }
+    compileKotlin { kotlinOptions { jvmTarget = jvmTargetVersion } }
+    compileTestKotlin { kotlinOptions { jvmTarget = jvmTargetVersion } }
 
     withType<Test> {
         useJUnitPlatform()
