@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 
 @OptIn(DelicateCoroutinesApi::class)
 class HealthCheckAllTest {
-
     @Test
     fun `test healthCheckAll empty`() {
         val result = healthCheckAll(emptyList())
@@ -25,8 +24,8 @@ class HealthCheckAllTest {
     fun `test healthCheckAll`() {
         val monitor1 = mockk<HealthMonitor>()
         val monitor2 = mockk<HealthMonitor>()
-        every { monitor1.check() } returns(HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy"))
-        every { monitor2.check() } returns(HealthCheckResponse("Monitor2", false, "Monitor 2 is healthy"))
+        every { monitor1.check() } returns (HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy"))
+        every { monitor2.check() } returns (HealthCheckResponse("Monitor2", false, "Monitor 2 is healthy"))
 
         val result = healthCheckAll(listOf(monitor1, monitor2))
 
@@ -40,8 +39,8 @@ class HealthCheckAllTest {
     fun `test healthCheckAll with custom context`() {
         val monitor1 = mockk<HealthMonitor>()
         val monitor2 = mockk<HealthMonitor>()
-        every { monitor1.check() } answers { HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy on ${Thread.currentThread()}")}
-        every { monitor2.check() } answers { HealthCheckResponse("Monitor2", true, "Monitor 2 is healthy on ${Thread.currentThread()}")}
+        every { monitor1.check() } answers { HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy on ${Thread.currentThread()}") }
+        every { monitor2.check() } answers { HealthCheckResponse("Monitor2", true, "Monitor 2 is healthy on ${Thread.currentThread()}") }
 
         newSingleThreadContext(name = "TestContext").use { context ->
             val result = healthCheckAll(listOf(monitor1, monitor2), context)
@@ -69,8 +68,8 @@ class HealthCheckAllTest {
     fun `test allFailedChecks`() {
         val monitor1 = mockk<HealthMonitor>()
         val monitor2 = mockk<HealthMonitor>()
-        every { monitor1.check() } returns(HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy"))
-        every { monitor2.check() } returns(HealthCheckResponse("Monitor2", false, "Monitor 2 is healthy"))
+        every { monitor1.check() } returns (HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy"))
+        every { monitor2.check() } returns (HealthCheckResponse("Monitor2", false, "Monitor 2 is healthy"))
 
         val result = allFailedChecks(listOf(monitor1, monitor2))
 
@@ -82,8 +81,8 @@ class HealthCheckAllTest {
     fun `test allFailedChecks multiple failure`() {
         val monitor1 = mockk<HealthMonitor>()
         val monitor2 = mockk<HealthMonitor>()
-        every { monitor1.check() } returns(HealthCheckResponse("Monitor1", false, "Monitor 1 is healthy"))
-        every { monitor2.check() } returns(HealthCheckResponse("Monitor2", false, "Monitor 2 is healthy"))
+        every { monitor1.check() } returns (HealthCheckResponse("Monitor1", false, "Monitor 1 is healthy"))
+        every { monitor2.check() } returns (HealthCheckResponse("Monitor2", false, "Monitor 2 is healthy"))
 
         val result = healthCheckAll(listOf(monitor1, monitor2))
 
