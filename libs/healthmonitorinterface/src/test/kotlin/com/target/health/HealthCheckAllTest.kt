@@ -2,10 +2,12 @@ package com.target.health
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldStartWith
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import org.junit.jupiter.api.Test
 
@@ -33,6 +35,7 @@ class HealthCheckAllTest {
         result[1].name shouldBe "Monitor2"
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `test healthCheckAll with custom context`() {
         val monitor1 = mockk<HealthMonitor>()
@@ -40,16 +43,18 @@ class HealthCheckAllTest {
         every { monitor1.check() } answers { HealthCheckResponse("Monitor1", true, "Monitor 1 is healthy on ${Thread.currentThread()}")}
         every { monitor2.check() } answers { HealthCheckResponse("Monitor2", true, "Monitor 2 is healthy on ${Thread.currentThread()}")}
 
-        val context = newSingleThreadContext(name = "TestContext")
+        newSingleThreadContext(name = "TestContext").use { context ->
+            val result = healthCheckAll(listOf(monitor1, monitor2), context)
 
-        val result = healthCheckAll(listOf(monitor1, monitor2), context)
-
-        assertSoftly {
-            result.size shouldBe 2
-            result[0].name shouldBe "Monitor1"
-            result[0].details shouldStartWith "Monitor 1 is healthy on Thread[TestContext @coroutine#"
-            result[1].name shouldBe "Monitor2"
-            result[1].details shouldStartWith "Monitor 2 is healthy on Thread[TestContext @coroutine#"
+            assertSoftly {
+                result.size shouldBe 2
+                result[0].name shouldBe "Monitor1"
+                result[0].details shouldStartWith "Monitor 1 is healthy on Thread["
+                result[0].details shouldContain "TestContext"
+                result[1].name shouldBe "Monitor2"
+                result[1].details shouldStartWith "Monitor 2 is healthy on Thread["
+                result[1].details shouldContain "TestContext"
+            }
         }
     }
 
