@@ -11,26 +11,24 @@ import kotlin.coroutines.CoroutineContext
  */
 fun healthCheckAll(
     healthMonitors: List<HealthMonitor>,
-    coroutineContext: CoroutineContext = Dispatchers.IO
-): List<HealthCheckResponse> {
-    return runBlocking(context = coroutineContext) {
-        healthMonitors.map { monitor ->
-            async {
-                try {
-                    monitor.check()
-                } catch (t: Throwable) {
-                    HealthCheckResponse(
-                        name = monitor.name,
-                        isHealthy = false,
-                        details = "${t::class.qualifiedName} - ${t.message}"
-                    )
-                }
+    coroutineContext: CoroutineContext = Dispatchers.IO,
+): List<HealthCheckResponse> = runBlocking(context = coroutineContext) {
+    healthMonitors.map { monitor ->
+        async {
+            try {
+                monitor.check()
+            } catch (t: Throwable) {
+                HealthCheckResponse(
+                    name = monitor.name,
+                    isHealthy = false,
+                    details = "${t::class.qualifiedName} - ${t.message}",
+                )
             }
-        }.awaitAll()
-    }
+        }
+    }.awaitAll()
 }
 
 fun allFailedChecks(
     healthMonitors: List<HealthMonitor>,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ): List<HealthCheckResponse> = healthCheckAll(healthMonitors, coroutineContext).filter { !it.isHealthy }
