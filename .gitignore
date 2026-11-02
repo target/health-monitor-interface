@@ -16,3 +16,4 @@ out
 *.iws
 
 .DS_Store
+.kotlin/
