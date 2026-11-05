@@ -1,5 +1,10 @@
 rootProject.name = "health-monitor-interface"
 
+pluginManagement {
+    // convention plugins shared by the modules of this build
+    includeBuild("build-logic")
+}
+
 include("libs:healthmonitorinterface")
 
 // This processing allows us to use the submodule name for submodule build files.
