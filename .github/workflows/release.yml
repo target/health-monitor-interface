@@ -20,12 +20,10 @@ jobs:
           distribution: 'temurin'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6
-      - name: Set Release Version as an environment variable
-        run: echo "PUBLISH_VERSION=$(echo ${{ github.event.release.tag_name }})" >> $GITHUB_ENV
       - name: Publish package
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
         with:
-          arguments: -Pversion=${{ env.PUBLISH_VERSION }} publishToSonatype closeAndReleaseSonatypeStagingRepository
+          arguments: -Pversion=${GITHUB_REF_NAME} publishToSonatype closeAndReleaseSonatypeStagingRepository
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
