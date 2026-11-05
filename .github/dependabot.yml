@@ -83,6 +83,10 @@ updates:
       day: "sunday"
       time: "00:00"
       timezone: "Asia/Kolkata"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     allow:
       - dependency-type: "direct"
 
